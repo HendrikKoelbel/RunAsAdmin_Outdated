@@ -94,40 +94,43 @@ namespace RunAs
                 //{
                 using (LogonUser(domain, username, password, LogonType.Service))
                 {
-
+                    
                     //UACHelper.UACHelper.StartElevated(new ProcessStartInfo(path)); // not working 
 
                     //---------------------------
                     //---------------------------
                     //Der Verzeichnisname ist ungültig
                     //   bei System.Diagnostics.Process.StartWithCreateProcess(ProcessStartInfo startInfo)
-                    
+
                     //   bei System.Diagnostics.Process.Start()
-                    
+
                     //   bei RunAs.frmMain.buttonStart_Click(Object sender, EventArgs e)
                     //System
-                    
+
                     //System.Collections.ListDictionaryInternal
                     //-------------------------- -
                     //OK
                     //-------------------------- -
-
-                    Process p = new Process();
-
-                    ProcessStartInfo ps = new ProcessStartInfo();
-
-                    ps.FileName = Assembly.GetExecutingAssembly().GetName().Name + ".exe"; // Fehler
-                    ps.WorkingDirectory = executablePath; // Fehler
-                    ps.Domain = domain;
-                    ps.UserName = username;
-                    ps.Password = GetSecureString(password);
-                    ps.LoadUserProfile = true;
-                    ps.UseShellExecute = false;
-                    p.StartInfo = ps;
-                    if (p.Start())
+                    using (WindowsIdentity.GetCurrent().Impersonate())
                     {
-                        Application.Exit();
+                        Process p = new Process();
+
+                        ProcessStartInfo ps = new ProcessStartInfo();
+
+                        ps.FileName = executablePath; // Fehler
+                                                                                               //ps.WorkingDirectory = executablePath; // Fehler
+                        ps.Domain = domain;
+                        ps.UserName = username;
+                        ps.Password = GetSecureString(password);
+                        ps.LoadUserProfile = true;
+                        ps.UseShellExecute = false;
+                        p.StartInfo = ps;
+                        if (p.Start())
+                        {
+                            Application.Exit();
+                        }
                     }
+                    
                 }
                 //});
             }
