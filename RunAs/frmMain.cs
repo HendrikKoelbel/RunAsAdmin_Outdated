@@ -39,7 +39,10 @@ namespace RunAs
                     textBoxDomain.Text = String.Empty;
                     textBoxUsername.Text = String.Empty;
                     textBoxPassword.Text = String.Empty;
-                    File.Delete(credentialsPath);
+                    if (File.Exists(credentialsPath))
+                    {
+                        File.Delete(credentialsPath);
+                    }
                 }
             }
             if (!UACHelper.UACHelper.IsElevated)
@@ -47,7 +50,7 @@ namespace RunAs
                 buttonRestartWithAdminRights.Enabled = false;
                 //WinForm.ShieldifyButton(buttonRestartWithAdminRights);
             }
-            if (Environment.UserName == "Clientadmin")
+            if (Environment.UserName == "Clientadmin" || Environment.UserName == "clientadmin")
             {
                 buttonStart.Enabled = false;
                 textBoxDomain.Enabled = false;
@@ -56,35 +59,39 @@ namespace RunAs
                 buttonRestartWithAdminRights.Enabled = true;
             }
         }
-
+        // Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments)
         public string credentialsPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments) + @"\Credentials.json";
+        public string executablePath = Application.StartupPath; // or Assembly.GetAssembly(typeof(MyAssemblyType)).Location
+        public string executableFile = Assembly.GetExecutingAssembly().Location; // or Assembly.GetAssembly(typeof(MyAssemblyType)).Location
         public string username;
         public string password;
         public string domain;
 
         private void buttonStart_Click(object sender, EventArgs e)
         {
-            this.UseWaitCursor = true;
-            buttonStart.Enabled = false;
-            textBoxDomain.Enabled = false;
-            textBoxUsername.Enabled = false;
-            textBoxPassword.Enabled = false;
-
-
-            JObject setCredentials = new JObject(
-                new JProperty("domain", textBoxDomain.Text),
-                new JProperty("username", textBoxUsername.Text),
-                new JProperty("password", ss.Encrypt(textBoxPassword.Text)));
-
-            File.WriteAllText(credentialsPath, setCredentials.ToString());
-
-            JObject getCredentials = JObject.Parse(File.ReadAllText(credentialsPath));
-            domain = getCredentials.SelectToken("domain").ToString();
-            username = getCredentials.SelectToken("username").ToString();
-            password = ss.Decrypt(getCredentials.SelectToken("password").ToString());
-
-            Task.Factory.StartNew(() =>
+            try
             {
+                this.UseWaitCursor = true;
+                buttonStart.Enabled = false;
+                textBoxDomain.Enabled = false;
+                textBoxUsername.Enabled = false;
+                textBoxPassword.Enabled = false;
+
+
+                JObject setCredentials = new JObject(
+                    new JProperty("domain", textBoxDomain.Text),
+                    new JProperty("username", textBoxUsername.Text),
+                    new JProperty("password", ss.Encrypt(textBoxPassword.Text)));
+
+                File.WriteAllText(credentialsPath, setCredentials.ToString());
+
+                JObject getCredentials = JObject.Parse(File.ReadAllText(credentialsPath));
+                domain = getCredentials.SelectToken("domain").ToString();
+                username = getCredentials.SelectToken("username").ToString();
+                password = ss.Decrypt(getCredentials.SelectToken("password").ToString());
+
+                //Task.Factory.StartNew(() =>
+                //{
                 using (LogonUser(domain, username, password, LogonType.Service))
                 {
 
@@ -92,7 +99,8 @@ namespace RunAs
 
                     ProcessStartInfo ps = new ProcessStartInfo();
 
-                    ps.FileName = Application.ExecutablePath;
+                    ps.FileName = Assembly.GetExecutingAssembly().GetName().Name + ".exe";
+                    ps.WorkingDirectory = executablePath;
                     ps.Domain = domain;
                     ps.UserName = username;
                     ps.Password = GetSecureString(password);
@@ -104,7 +112,12 @@ namespace RunAs
                         Application.Exit();
                     }
                 }
-            });
+                //});
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message + "\n" + ex.StackTrace + "\n" + ex.Source + "\n" + ex.InnerException + "\n" + ex.Data);
+            }
         }
 
         private void buttonRestartWithAdminRights_Click(object sender, EventArgs e)
