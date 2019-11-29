@@ -25,23 +25,6 @@ namespace RunAs
         public frmMain()
         {
             InitializeComponent();
-        }
-
-        private void frmMain_Load(object sender, EventArgs e)
-        {
-            Task.Factory.StartNew(() =>
-            {
-                SetDataSource(comboBoxDomain, GetAllDomains().ToArray());
-                SetDataSource(comboBoxUsername, GetAllUsers().ToArray());
-                // update UI
-                this.BeginInvoke(new Action(() =>
-                {
-                    Placeholder(comboBoxDomain, "Domain");
-                    Placeholder(comboBoxUsername, "Username");
-                    Placeholder(textBoxPassword, "Password");
-                    buttonStart.Focus();
-                }));
-            });
             labelCurrentUser.Text = String.Format("Current user: {0} " +
                     "\nDefault Behavior: {1} " +
                     "\nIs Elevated: {2}" +
@@ -56,21 +39,23 @@ namespace RunAs
                     UACHelper.UACHelper.IsDesktopOwner.ToString(),
                     WindowsIdentity.GetCurrent().Name ?? "SYSTEM",
                     UACHelper.UACHelper.DesktopOwner.ToString());
+
+            SetDataSource(comboBoxDomain, GetAllDomains().ToArray());
+            SetDataSource(comboBoxUsername, GetAllUsers().ToArray());
+
+            Placeholder(comboBoxDomain, "Domain");
+            Placeholder(comboBoxUsername, "Username");
+            Placeholder(textBoxPassword, "Password");
+            buttonStart.Focus();
+
             if (File.Exists(credentialsPath))
             {
                 try
                 {
-                    Task.Factory.StartNew(() =>
-                    {
-                        JObject getCredentials = JObject.Parse(File.ReadAllText(credentialsPath));
-                        // update UI
-                        this.BeginInvoke(new Action(() =>
-                        {
-                            comboBoxDomain.Text = getCredentials.SelectToken("domain").ToString();
-                            comboBoxUsername.Text = getCredentials.SelectToken("username").ToString();
-                            textBoxPassword.Text = ss.Decrypt(getCredentials.SelectToken("password").ToString());
-                        }));
-                    });
+                    JObject getCredentials = JObject.Parse(File.ReadAllText(credentialsPath));
+                    comboBoxDomain.Text = getCredentials.SelectToken("domain").ToString();
+                    comboBoxUsername.Text = getCredentials.SelectToken("username").ToString();
+                    textBoxPassword.Text = ss.Decrypt(getCredentials.SelectToken("password").ToString());
                 }
                 catch (Exception)
                 {

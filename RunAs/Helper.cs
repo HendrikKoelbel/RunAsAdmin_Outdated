@@ -21,12 +21,14 @@ namespace RunAs
         {
             if (stringArray != null)
             {
+                Array.Sort(stringArray);
                 AutoCompleteStringCollection col = new AutoCompleteStringCollection();
                 foreach (var item in stringArray)
                 {
                     col.Add(item);
                 }
                 comboBox.DataSource = col;
+                comboBox.AutoCompleteCustomSource = col;
             }
             else
             {
