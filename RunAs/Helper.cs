@@ -20,18 +20,25 @@ namespace RunAs
         #region  Bind textbox custom source
         public static void SetDataSource(ComboBox comboBox, params string[] stringArray)
         {
-            if (stringArray != null)
+            try
             {
-                Array.Sort(stringArray);
-                AutoCompleteStringCollection col = new AutoCompleteStringCollection();
-                foreach (var item in stringArray)
+                if (stringArray != null)
                 {
-                    col.Add(item);
+                    Array.Sort(stringArray);
+                    AutoCompleteStringCollection col = new AutoCompleteStringCollection();
+                    foreach (var item in stringArray)
+                    {
+                        col.Add(item);
+                    }
+                    comboBox.DataSource = col;
+                    comboBox.AutoCompleteCustomSource = col;
                 }
-                comboBox.DataSource = col;
-                comboBox.AutoCompleteCustomSource = col;
+                else
+                {
+                    return;
+                }
             }
-            else
+            catch (Exception)
             {
                 return;
             }
@@ -41,16 +48,22 @@ namespace RunAs
         #region Get all Domains as string list
         public static List<string> GetAllDomains()
         {
-            using (var forest = Forest.GetCurrentForest())
+            var domainList = new List<string>();
+            try
             {
-                var domainList = new List<string>();
-                domainList.Add(Environment.MachineName);
-                foreach (Domain domain in forest.Domains)
+                using (var forest = Forest.GetCurrentForest())
                 {
-                    domainList.Add(domain.Name);
-                    domain.Dispose();
+                    domainList.Add(Environment.MachineName);
+                    foreach (Domain domain in forest.Domains)
+                    {
+                        domainList.Add(domain.Name);
+                        domain.Dispose();
+                    }
+                    return domainList;
                 }
-
+            }
+            catch (Exception)
+            {
                 return domainList;
             }
         }
@@ -88,14 +101,21 @@ namespace RunAs
 
         public static void Placeholder(Control control, string placeholder)
         {
-            if (control is ComboBox)
+            try
             {
-                COMBOBOXINFO info = GetComboBoxInfo(control);
-                SendMessage(info.hwndItem, EM_SETCUEBANNER, 0, placeholder);
+                if (control is ComboBox)
+                {
+                    COMBOBOXINFO info = GetComboBoxInfo(control);
+                    SendMessage(info.hwndItem, EM_SETCUEBANNER, 0, placeholder);
+                }
+                else
+                {
+                    SendMessage(control.Handle, EM_SETCUEBANNER, 0, placeholder);
+                }
             }
-            else
+            catch (Exception)
             {
-                SendMessage(control.Handle, EM_SETCUEBANNER, 0, placeholder);
+
             }
         }
 
@@ -114,20 +134,27 @@ namespace RunAs
         private const int UF_ACCOUNTDISABLE = 0x0002;
         public static List<string> GetLocalUsers()
         {
-            var path = string.Format("WinNT://{0},computer", Environment.MachineName);
-            using (var computerEntry = new DirectoryEntry(path))
+            var users = new List<string>();
+            try
             {
-                var users = new List<string>();
-                foreach (DirectoryEntry childEntry in computerEntry.Children)
+                var path = string.Format("WinNT://{0},computer", Environment.MachineName);
+                using (var computerEntry = new DirectoryEntry(path))
                 {
-                    if (childEntry.SchemaClassName == "User")// filter all users
+                    foreach (DirectoryEntry childEntry in computerEntry.Children)
                     {
-                        if (((int)childEntry.Properties["UserFlags"].Value & UF_ACCOUNTDISABLE) != UF_ACCOUNTDISABLE)// only if accounts are enabled
+                        if (childEntry.SchemaClassName == "User")// filter all users
                         {
-                            users.Add(childEntry.Name); // add active user to list
+                            if (((int)childEntry.Properties["UserFlags"].Value & UF_ACCOUNTDISABLE) != UF_ACCOUNTDISABLE)// only if accounts are enabled
+                            {
+                                users.Add(childEntry.Name); // add active user to list
+                            }
                         }
                     }
+                    return users;
                 }
+            }
+            catch (Exception)
+            {
                 return users;
             }
         }
@@ -136,29 +163,35 @@ namespace RunAs
         #region Get all ad users as string list
         public static List<string> GetADUsers()
         {
-            using (var forest = Forest.GetCurrentForest())
+            var ADUsers = new List<string>();
+            try
             {
-                var domainList = new List<string>();
-                var ADUsers = new List<string>();
-                foreach (Domain domain in forest.Domains)
+                using (var forest = Forest.GetCurrentForest())
                 {
-                    using (var context = new PrincipalContext(ContextType.Domain, domain.Name))
+                    foreach (Domain domain in forest.Domains)
                     {
-                        using (var searcher = new PrincipalSearcher(new UserPrincipal(context)))
+                        using (var context = new PrincipalContext(ContextType.Domain, domain.Name))
                         {
-                            foreach (var result in searcher.FindAll())
+                            using (var searcher = new PrincipalSearcher(new UserPrincipal(context)))
                             {
-                                DirectoryEntry de = result.GetUnderlyingObject() as DirectoryEntry;
-                                ADUsers.Add(de.Properties["samAccountName"].Value.ToString());
-                                //Console.WriteLine("First Name: " + de.Properties["givenName"].Value);
-                                //Console.WriteLine("Last Name : " + de.Properties["sn"].Value);
-                                //Console.WriteLine("SAM account name   : " + de.Properties["samAccountName"].Value);
-                                //Console.WriteLine("User principal name: " + de.Properties["userPrincipalName"].Value);
+                                foreach (var result in searcher.FindAll())
+                                {
+                                    DirectoryEntry de = result.GetUnderlyingObject() as DirectoryEntry;
+                                    ADUsers.Add(de.Properties["samAccountName"].Value.ToString());
+                                    //Console.WriteLine("First Name: " + de.Properties["givenName"].Value);
+                                    //Console.WriteLine("Last Name : " + de.Properties["sn"].Value);
+                                    //Console.WriteLine("SAM account name   : " + de.Properties["samAccountName"].Value);
+                                    //Console.WriteLine("User principal name: " + de.Properties["userPrincipalName"].Value);
+                                }
                             }
                         }
+                        domain.Dispose();
                     }
-                    domain.Dispose();
+                    return ADUsers;
                 }
+            }
+            catch (Exception)
+            {
                 return ADUsers;
             }
         } 
@@ -199,19 +232,26 @@ namespace RunAs
         #region Get users SID
         public static string GetUsersSID()
         {
-            // create your domain context
-            PrincipalContext ctx = new PrincipalContext(ContextType.Domain);
-            // find the user
-            UserPrincipal user = UserPrincipal.FindByIdentity(ctx, WindowsIdentity.GetCurrent().Name);
-
-            if (user != null)
+            try
             {
-                var usersSid = user.Sid.ToString();
-                var username = user.DisplayName;
-                var userSamAccountName = user.SamAccountName;
-                return usersSid;
+                // create your domain context
+                PrincipalContext ctx = new PrincipalContext(ContextType.Domain);
+                // find the user
+                UserPrincipal user = UserPrincipal.FindByIdentity(ctx, WindowsIdentity.GetCurrent().Name);
+
+                if (user != null)
+                {
+                    var usersSid = user.Sid.ToString();
+                    var username = user.DisplayName;
+                    var userSamAccountName = user.SamAccountName;
+                    return usersSid;
+                }
+                return null;
             }
-            return null;
+            catch (Exception)
+            {
+                return null;
+            }
         }
         #endregion
     }
