@@ -29,6 +29,7 @@ namespace RunAs
         public frmMain()
         {
             InitializeComponent();
+            this.Text = this.Text + " - " + Assembly.GetExecutingAssembly().GetName().Version;
             labelCurrentUser.Text = String.Format("Current user: {0} " +
                     "\nDefault Behavior: {1} " +
                     "\nIs Elevated: {2}" +
@@ -322,16 +323,24 @@ namespace RunAs
                     var result = await manager.CheckForUpdatesAsync();
                     if (result.CanUpdate)
                     {
-                        // Prepare an update by downloading and extracting the package
-                        // (supports progress reporting and cancellation)
-                        await manager.PrepareUpdateAsync(result.LastVersion);
+                        DialogResult dialog = MessageBox.Show(String.Format("A new version is available.\nold version: {0}\nnew version: {1}\nDo you want to update the version?", Assembly.GetExecutingAssembly().GetName().Version, result.LastVersion), "New update available", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                        if (dialog == DialogResult.Yes)
+                        {
+                            // Prepare an update by downloading and extracting the package
+                            // (supports progress reporting and cancellation)
+                            await manager.PrepareUpdateAsync(result.LastVersion);
 
-                        // Launch an executable that will apply the update
-                        // (can be instructed to restart the application afterwards)
-                        manager.LaunchUpdater(result.LastVersion);
+                            // Launch an executable that will apply the update
+                            // (can be instructed to restart the application afterwards)
+                            manager.LaunchUpdater(result.LastVersion);
 
-                        // Terminate the running application so that the updater can overwrite files
-                        Environment.Exit(0);
+                            // Terminate the running application so that the updater can overwrite files
+                            Environment.Exit(0);
+                        }
+                        else
+                        {
+
+                        }
                     }
                 }
             }
