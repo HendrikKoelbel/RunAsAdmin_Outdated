@@ -229,7 +229,7 @@ namespace RunAs
                 fileDialog.Filter = "Application (*.exe)|*.exe";
                 fileDialog.Title = "Select a application";
                 fileDialog.DereferenceLinks = true;
-                fileDialog.Multiselect = false;
+                fileDialog.Multiselect = true;
                 DialogResult result = fileDialog.ShowDialog();
                 if (result == DialogResult.OK || result == DialogResult.Yes)
                 {

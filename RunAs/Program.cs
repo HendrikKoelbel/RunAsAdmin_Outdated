@@ -43,7 +43,7 @@ namespace RunAs
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Message: \n" + ex.Message + "\n\n" + "Source: \n" + ex.Source + "\n\n" + "Stack: \n" + ex.StackTrace + "\n\n" + "Data: \n" + ex.Data, ex.GetType().Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Message: \n" + ex.Message /* + "\n\n" + "Source: \n" + ex.Source + "\n\n" + "Stack: \n" + ex.StackTrace + "\n\n" + "Data: \n" + ex.Data*/, ex.GetType().Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
