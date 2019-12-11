@@ -7,7 +7,7 @@ You can easily download and run the program [here](https://github.com/Hendrik-Ko
 
 ### Prerequisites
 
-- min. .net Framework 4.7
+- Supporting .NET Framework (4.7+)
 
 ## Built With
 
