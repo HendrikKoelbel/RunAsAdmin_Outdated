@@ -1,4 +1,4 @@
-name: Upload Release Asset
+name: Publish
 
 on:
   push:
