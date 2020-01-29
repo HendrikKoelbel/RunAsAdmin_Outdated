@@ -230,11 +230,9 @@ namespace RunAs
                         //p.StartInfo = ps;
                         //p.Start();
                     });
-
                 }
                 else
                 {
-
                 }
             }
             catch (Exception ex)
