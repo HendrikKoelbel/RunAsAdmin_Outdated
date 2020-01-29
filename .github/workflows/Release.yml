@@ -12,11 +12,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@master
-      - name: Build DotNET35
-        run:
+      - name: Build DotNET47
+        run: |
            cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\"
            .\MSBuild.exe $Env:GITHUB_WORKSPACE\RunAs
-          zip --junk-paths RunAs README.md \RunAs\bin\Debug\RunAs.exe 
+           zip --junk-paths RunAs README.md \RunAs\bin\Debug\RunAs.exe 
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1.0.0
