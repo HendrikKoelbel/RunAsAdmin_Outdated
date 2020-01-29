@@ -45,7 +45,7 @@
             // 
             this.buttonStart.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.buttonStart.AutoSize = true;
-            this.buttonStart.Location = new System.Drawing.Point(20, 158);
+            this.buttonStart.Location = new System.Drawing.Point(20, 156);
             this.buttonStart.Margin = new System.Windows.Forms.Padding(8, 9, 8, 9);
             this.buttonStart.Name = "buttonStart";
             this.buttonStart.Size = new System.Drawing.Size(113, 50);
@@ -58,7 +58,7 @@
             // 
             this.buttonRestartWithAdminRights.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.buttonRestartWithAdminRights.AutoSize = true;
-            this.buttonRestartWithAdminRights.Location = new System.Drawing.Point(224, 158);
+            this.buttonRestartWithAdminRights.Location = new System.Drawing.Point(223, 156);
             this.buttonRestartWithAdminRights.Margin = new System.Windows.Forms.Padding(8, 9, 8, 9);
             this.buttonRestartWithAdminRights.Name = "buttonRestartWithAdminRights";
             this.buttonRestartWithAdminRights.Size = new System.Drawing.Size(155, 50);
@@ -77,7 +77,7 @@
             this.labelCurrentUser.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
             this.labelCurrentUser.MaximumSize = new System.Drawing.Size(1070, 675);
             this.labelCurrentUser.Name = "labelCurrentUser";
-            this.labelCurrentUser.Size = new System.Drawing.Size(433, 16);
+            this.labelCurrentUser.Size = new System.Drawing.Size(432, 16);
             this.labelCurrentUser.TabIndex = 0;
             this.labelCurrentUser.Text = "labelUser";
             this.labelCurrentUser.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -91,7 +91,7 @@
             this.textBoxPassword.Margin = new System.Windows.Forms.Padding(8, 9, 8, 9);
             this.textBoxPassword.Name = "textBoxPassword";
             this.textBoxPassword.PasswordChar = '●';
-            this.textBoxPassword.Size = new System.Drawing.Size(279, 25);
+            this.textBoxPassword.Size = new System.Drawing.Size(278, 25);
             this.textBoxPassword.TabIndex = 3;
             this.textBoxPassword.Tag = "";
             this.textBoxPassword.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxPassword_KeyDown);
@@ -158,7 +158,7 @@
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel.Size = new System.Drawing.Size(449, 221);
+            this.tableLayoutPanel.Size = new System.Drawing.Size(448, 218);
             this.tableLayoutPanel.TabIndex = 9;
             // 
             // comboBoxDomain
@@ -170,7 +170,7 @@
             this.comboBoxDomain.Location = new System.Drawing.Point(162, 25);
             this.comboBoxDomain.Margin = new System.Windows.Forms.Padding(8, 9, 8, 9);
             this.comboBoxDomain.Name = "comboBoxDomain";
-            this.comboBoxDomain.Size = new System.Drawing.Size(279, 25);
+            this.comboBoxDomain.Size = new System.Drawing.Size(278, 25);
             this.comboBoxDomain.TabIndex = 1;
             // 
             // comboBoxUsername
@@ -182,7 +182,7 @@
             this.comboBoxUsername.Location = new System.Drawing.Point(162, 68);
             this.comboBoxUsername.Margin = new System.Windows.Forms.Padding(8, 9, 8, 9);
             this.comboBoxUsername.Name = "comboBoxUsername";
-            this.comboBoxUsername.Size = new System.Drawing.Size(279, 25);
+            this.comboBoxUsername.Size = new System.Drawing.Size(278, 25);
             this.comboBoxUsername.TabIndex = 2;
             // 
             // frmMain
@@ -191,7 +191,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(449, 221);
+            this.ClientSize = new System.Drawing.Size(448, 218);
             this.Controls.Add(this.tableLayoutPanel);
             this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Margin = new System.Windows.Forms.Padding(8, 9, 8, 9);
